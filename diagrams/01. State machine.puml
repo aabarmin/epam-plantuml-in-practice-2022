@@ -1,0 +1,36 @@
+@startuml State Machine
+
+state "Collect Information" as collectInformation
+state "Validate Information" as validateInformation {
+    state "Start validation" as validationStart <<entryPoint>>
+    state "Check PII filled" as validationCheckPii : First and last names \nto be provided
+    state "Check income source filled" as checkIncomeSourceFilled : Income details \nto be provided
+    state "Check address filled" as checkAddressFilled : Address should be provided
+    state "Rejected" as validationRejected <<exitPoint>>
+    state "Approved" as validationApproved <<exitPoint>>
+    
+    validationStart --> validationCheckPii
+    validationCheckPii --> validationRejected : PII not provided
+    validationCheckPii --> checkIncomeSourceFilled : Provided
+    checkIncomeSourceFilled --> validationRejected : Income Source not provided
+    checkIncomeSourceFilled --> checkAddressFilled : Provided
+    checkAddressFilled --> validationRejected : Address not provided
+    checkAddressFilled --> validationApproved: Success validation
+}
+state "Application Rejected" as applicationRejected #ff0000
+state "Financial Crime Checks" as financialChecks
+state "Application Approved" as applicationApproved #00ff00
+state "Application Created" as applicationCreated #00ff00
+
+[*] --> collectInformation
+collectInformation --> validationStart : Submit the application
+validationRejected --> collectInformation : There are validation issues \nor incomplete information
+validationApproved --> financialChecks : No validation issues
+
+financialChecks --> applicationRejected : Financial check violation
+financialChecks --> applicationApproved : Financial checks passed
+applicationRejected --> [*]
+applicationApproved --> applicationCreated : Create an application
+applicationCreated --> [*]
+
+@enduml

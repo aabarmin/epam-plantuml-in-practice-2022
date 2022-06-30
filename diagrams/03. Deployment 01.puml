@@ -1,0 +1,11 @@
+@startuml Deployment view
+    
+    cloud AWS as cloudAWS
+    cloud GCP as cloudGCP
+    cloud "On-Premises" as onPremises
+
+    cloudAWS -0- onPremises : Direct Connect
+    cloudGCP -0- onPremises : VPN
+    
+
+@enduml

@@ -1,0 +1,38 @@
+@startuml Sequence diagram
+
+    actor Client as client
+    participant "Web server" as webServer
+    participant "Web application" as webApplication
+    participant "Customer service" as customerService
+    database "Customer database" as customerDatabase
+    queue "Customer MQ Topic" as customerTopic
+
+    client --> webServer: GET http://super-bank.com
+    webServer --> client: Bank SPA
+
+    client --> webApplication: Personal data
+
+        webApplication --> customerService: Personal data
+            customerService --> customerService: Validate provided data
+            note left
+                Validate not only provided data but also
+                if this customer is known to bank
+            end note
+
+            alt Not all the data provided
+                customerService --> webApplication: Validation failure
+                webApplication --> client: Validation error message
+            else Applicant is already a customer
+                customerService --> webApplication: Applicant known to bank
+                webApplication --> client: Already a customer message
+            else
+                customerService --> customerDatabase: Personal data record
+                customerDatabase --> customerService: Saved person data record
+
+                customerService --> customerTopic: Message to the topic
+
+                customerService --> webApplication: 200 OK
+                webApplication --> client: 200 OK
+            end
+
+@enduml

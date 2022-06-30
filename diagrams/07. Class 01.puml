@@ -1,0 +1,35 @@
+@startuml Class diagram
+
+    class NamePrefixValidator {
+        + boolean validate(String prefix)
+        - NamePrefixRepository repository
+    }
+
+    class NamePrefix {
+        - String name
+        - String description
+    }
+
+    interface NamePrefixRepository {
+        + Optional<NamePrefix> findByName(String name)
+        + Optional<NamePrefix> findByDescription(String description)
+    }
+
+    class NamePrefixJpaRepository {
+        - DataSource dataSource
+        + Optional<NamePrefix> findByName(String name)
+        + Optional<NamePrefix> findByDescription(String description)
+    }
+
+    class NamePrefixMongoRepository {
+        - MongoTemplate mongoTemplate
+        + Optional<NamePrefix> findByName(String name)
+        + Optional<NamePrefix> findByDescription(String description)
+    }
+
+    NamePrefixValidator .left.> NamePrefix
+    NamePrefixRepository -up-> NamePrefixValidator
+    NamePrefixJpaRepository -up-|> NamePrefixRepository
+    NamePrefixMongoRepository -up-|> NamePrefixRepository
+
+@enduml

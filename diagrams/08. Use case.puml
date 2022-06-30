@@ -1,0 +1,28 @@
+@startuml Use cases
+
+    left to right direction
+
+    actor Client as client
+    actor Operator as operator
+
+    package "Customer Service" {
+        usecase "Create applicant" as applicantCreate
+        usecase "Get applicant" as applicantGet
+        usecase "Update applicant" as applicantUpdate
+    }
+
+    package "Address Service" {
+        usecase "Create address" as addressCreate
+        usecase "Get address" as addressGet
+        usecase "Update address" as addressUpdate
+    }
+
+    client --> applicantCreate
+    client --> applicantGet
+    operator -left-> applicantUpdate
+
+    client --> addressCreate
+    client --> addressGet
+    operator --> addressUpdate
+
+@enduml

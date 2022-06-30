@@ -1,0 +1,37 @@
+@startuml Components
+
+    () "Customer API" as customerAPI
+    () "Address API" as addressAPI
+    () "Validation API" as validationAPI
+    () "Application API" as applicationAPI
+    
+    () "Customer DAO" as customerDAO
+    () "Address DAO" as addressDAO
+
+    component "Kubernetes" #00ff00 {
+        [Customer Details Service] as customerService <<Spring Boot App>>
+        [Address Details Service] as addressService <<Spring Boot App>>
+    }
+    
+    component "Open Shift" #ff0000 {
+        [Validation Service] as validationService <<Spring Boot App>>
+    }
+    
+    component "Docker Swarm" #c0c0c0 {
+        [Application Service] as applicationService <<Spring Boot App>>
+    }
+
+    customerDAO -down- customerService
+    customerService --> customerAPI : Publish
+
+    addressDAO -down- addressService
+    addressService --> addressAPI : Publish
+
+    validationService --> validationAPI : Publish
+    applicationService --> applicationAPI : Publish
+
+    applicationService -up-( customerAPI : Use
+    applicationService -up-( addressAPI : Use
+    applicationService -up-( validationAPI : Use
+
+@enduml

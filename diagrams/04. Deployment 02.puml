@@ -1,0 +1,36 @@
+@startuml Deployment view 2
+
+    cloud AWS {
+        database RDS as rds
+        queue "Log pipeline" as logPipeline
+        queue "Metrics pipeline" as metricsPipeline
+
+        frame "Application service Autoscaling group" {
+            node "EC2 instances" {
+                folder "Docker Swarm Worker node" {
+                    artifact "Log collector" as logProducer
+                    artifact "Node monitor" as metricsProducer
+                    artifact "OpenJDK 11"
+
+                    component "Application service" as applicationService
+                }
+            }
+        }
+
+        frame "Monitoring services" {
+            node "Kafka node" {
+                component "Log consumer" as logConsumer
+                component "Metrics consumer" as metricsConsumer
+            }
+        }
+    }
+
+    applicationService --> rds : Use
+
+    logProducer --> logPipeline
+    logPipeline --> logConsumer
+
+    metricsProducer --> metricsPipeline
+    metricsPipeline --> metricsConsumer
+
+@enduml

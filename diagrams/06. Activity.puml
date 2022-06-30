@@ -1,0 +1,28 @@
+@startuml Activity diagram
+    title Validation customer information
+
+    (*) --> Check all the values are present
+    
+    if "Values are present" then
+        --> [Yes] Validate provided data agains vocabularies
+        --> === V1 ===
+            --> Validate name prefix
+            --> Throw name validation exception
+            --> === V2 ===
+
+        === V1 === --> Validate country code
+            --> Throw country validation exception
+            --> === V2 ===
+
+        === V1 === --> Validate income source
+            --> Throw income validation exception
+            --> === V2 ===
+
+        --> Succesful validation
+        --> (*)
+    else
+        --> [No] Throw a new validation exception
+        --> (*)
+    endif
+
+@enduml
